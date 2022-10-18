@@ -63,5 +63,5 @@ buck-out/
 /ios/Pods/
 /vendor/bundle/
 
-.prettierrc.js
-.eslintrc.js
+.prettierrc.json
+.eslintrc
