@@ -1,4 +1,4 @@
-import StartScreen from "./compnents/StartPage/StartScreen";
+import StartScreen from "./StartPage/StartScreen";
 
 
 function App () {
