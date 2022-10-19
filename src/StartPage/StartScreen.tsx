@@ -7,20 +7,23 @@ import CustomButton from './CustomButton';
 import CustomDropdown from './CustomDropdown';
 import { database } from '../firebase';
 import { topicsOfAppeal, subTopics } from './topics';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const StartScreen = () => {
+type Props = NativeStackScreenProps<any, 'create-issue', 'id'>
+
+
+const StartScreen = ({ navigation }: Props) => {
     const [nameInput, setNameInput] = useState('');
     const [topic, setTopic] = useState(-1);
     const [subTopic, setSubTopic] = useState(-1);
 
-    const [b, setB] = useState(false);
-
     const handleSubmit = () => {
-        if (nameInput && topic !== -1 && subTopic !== -1 && !b) {
+        if (nameInput && topic !== -1 && subTopic !== -1) {
 
             const id = uuid.default.v4();
 
             const newDialog = {
+                dialogId: id,
                 userName: nameInput,
                 operatorId: -1,
                 status: 'queue',
@@ -38,11 +41,16 @@ const StartScreen = () => {
                 ]
             };
 
-            update(ref(database), { [`dialogs/${id}`]: newDialog })
+            update(ref(database), { [`dialogs/${id}`]: newDialog });
 
-            setB(true);
+            navigation.navigate('queue');
         }
     }
+
+    useEffect(() => {
+        console.log('started');
+        return () => { console.log('cleared') }
+    }, []);
 
     useEffect(() => setSubTopic(-1), [topic])
 
@@ -71,14 +79,6 @@ const StartScreen = () => {
             />
 
             <CustomButton style={styles.button} onPressOut={handleSubmit} />
-
-            {b && (
-                <>
-                    <Text>{nameInput}</Text>
-                    <Text>{topic}</Text>
-                    <Text>{subTopic}</Text>
-                </>
-            )}
         </View>
     )
 }
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flex: 1,
         alignItems: 'center',
-        backgroundColor: '#333'
+        backgroundColor: '#000'
     },
     heading: {
         marginTop: 10,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     },
     input: {
         width: '80%',
-        backgroundColor: '#000',
+        backgroundColor: '#333',
         marginTop: 20,
         paddingLeft: 10,
         borderRadius: 5

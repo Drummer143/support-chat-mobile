@@ -18,10 +18,10 @@ const CustomDropdown = ({ placeholder, data, onChange, disabled = false }: Props
     return (
         <Dropdown
             style={styles.dropdown}
-            itemTextStyle={styles.dropdownItem}
-            inputSearchStyle={styles.dropdownSearchInput}
-            placeholderStyle={styles.dropdownPlaceholder}
-            containerStyle={styles.dropdownItemContainer}
+            itemTextStyle={styles.itemText}
+            inputSearchStyle={styles.inputSearch}
+            placeholderStyle={styles.placeholder}
+            containerStyle={styles.container}
             data={data}
             labelField='label'
             valueField='value'
@@ -38,32 +38,32 @@ const CustomDropdown = ({ placeholder, data, onChange, disabled = false }: Props
 const styles = StyleSheet.create({
     dropdown: {
         width: '80%',
-        backgroundColor: '#000',
+        backgroundColor: '#333',
         padding: 10,
         borderRadius: 5,
         marginTop: 25
     },
-    dropdownItem: {
+    itemText: {
         color: '#fff',
         backgroundColor: '#111',
         padding: 10,
         borderRadius: 5
     },
-    dropdownSearchInput: {
-        backgroundColor: '#000',
+    inputSearch: {
+        backgroundColor: '#333',
         color: '#fff',
         borderRadius: 5,
         borderColor: '#666'
     },
-    dropdownPlaceholder: {
+    placeholder: {
         opacity: 0.6
     },
-    dropdownItemContainer: {
+    container: {
         backgroundColor: '#222',
         color: '#fff',
         borderColor: '#777',
         borderRadius: 5
-    },
+    }
 })
 
 export default CustomDropdown;
