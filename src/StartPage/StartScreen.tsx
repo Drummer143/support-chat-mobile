@@ -7,12 +7,19 @@ import CustomButton from './CustomButton';
 import CustomDropdown from './CustomDropdown';
 import { database } from '../firebase';
 import { topicsOfAppeal, subTopics } from './topics';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
+import { auth } from './../firebase';
+import { RouteProp } from '@react-navigation/native';
+import { signOut, User } from 'firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
-type Props = NativeStackScreenProps<any, 'create-issue', 'id'>
+type Props = {
+    navigation: NativeStackNavigationProp<any, "create-issue", "id">
+    route: RouteProp<any, "create-issue">
+    user: User | null
+}
 
-
-const StartScreen = ({ navigation }: Props) => {
+const StartScreen = ({ navigation, user }: Props) => {
     const [nameInput, setNameInput] = useState('');
     const [topic, setTopic] = useState(-1);
     const [subTopic, setSubTopic] = useState(-1);
@@ -21,6 +28,7 @@ const StartScreen = ({ navigation }: Props) => {
         if (nameInput && topic !== -1 && subTopic !== -1) {
 
             const id = uuid.default.v4();
+            const timestamp = (new Date()).getTime();
 
             const newDialog = {
                 dialogId: id,
@@ -30,32 +38,44 @@ const StartScreen = ({ navigation }: Props) => {
                 messages: [
                     {
                         content: topic,
-                        timestamp: (new Date()).getTime(),
+                        timestamp,
                         writtenBy: 'client'
                     },
                     {
                         content: subTopic,
-                        timestamp: (new Date()).getTime(),
+                        timestamp,
                         writtenBy: 'client'
                     }
                 ]
             };
 
-            update(ref(database), { [`dialogs/${id}`]: newDialog });
+            const dbRef = ref(database);
+
+            update(dbRef, { [`dialogs/${id}`]: newDialog });
+
+            update(dbRef, { [`clientsData/uuid/currentDialog`]: id })
 
             navigation.navigate('queue');
         }
     }
 
-    useEffect(() => {
-        console.log('started');
-        return () => { console.log('cleared') }
-    }, []);
+    const handleLogOut = () => {
+        signOut(auth);
+        GoogleSignin.revokeAccess();
+        GoogleSignin.signOut();
+    }
+
+    console.log(user);
 
     useEffect(() => setSubTopic(-1), [topic])
 
     return (
         <View style={styles.wrapper}>
+            <View style={styles.userInfo}>
+                <Text style={styles.userName}>{user?.displayName || 'your user name'}</Text>
+                <CustomButton style={styles.logoutButton} text='Выйти' onPressIn={handleLogOut} />
+            </View>
+
             <Text style={styles.heading}>Здравствуйте!</Text>
             <Text style={styles.info}>Чтобы встать в очередь и получить помощь заполните анкету ниже.</Text>
 
@@ -78,7 +98,7 @@ const StartScreen = ({ navigation }: Props) => {
                 disabled={topic === -1}
             />
 
-            <CustomButton style={styles.button} onPressOut={handleSubmit} />
+            <CustomButton text='Отправить' style={styles.button} onPressOut={handleSubmit} />
         </View>
     )
 }
@@ -110,6 +130,31 @@ const styles = StyleSheet.create({
     button: {
         marginTop: 30,
         transform: [{ scale: 1.1 }]
+    },
+    userInfo: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        width: '100%',
+        padding: 15
+    },
+    userName: {
+        borderRadius: 10,
+        backgroundColor: '#fff',
+        color: '#000',
+        padding: 5,
+        fontSize: 16,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 15
+    },
+    logoutButton: {
+        backgroundColor: 'red',
+        color: '#000',
+        width: '20%',
+        height: 22,
+        marginTop: 4
     }
 })
 

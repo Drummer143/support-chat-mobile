@@ -2,19 +2,22 @@ import { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 type Props = {
-    style?: StyleMedia | null
+    text: string
+
+    style: StyleMedia | null
+    textColor?: string
 
     onPressIn?: Function | null
     onPressOut?: Function | null
 }
 
-const CustomButton = ({ style = null, onPressIn = null, onPressOut = null }: Props) => {
+const CustomButton = ({ text, style, textColor = 'white', onPressIn = null, onPressOut = null }: Props) => {
     const [active, setActive] = useState(false);
 
     const handlePressIn = () => {
         setActive(true);
 
-        if(onPressIn) {
+        if (onPressIn) {
             onPressIn();
         }
     }
@@ -33,7 +36,7 @@ const CustomButton = ({ style = null, onPressIn = null, onPressOut = null }: Pro
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
         >
-            <Text>Отправить</Text>
+            <Text style={{ color: textColor }}>{text}</Text>
         </TouchableOpacity>
     )
 }
