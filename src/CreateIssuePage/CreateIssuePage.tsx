@@ -52,7 +52,7 @@ const CreateIssuePage = ({ navigation, user }: Props) => {
 
             update(dbRef, { [`dialogs/${id}`]: newDialog });
 
-            update(dbRef, { ['clientsData/uuid/currentDialog']: id });
+            update(dbRef, { [`clientsData/${user?.uid}/currentDialog`]: id });
 
             navigation.navigate('queue');
         }

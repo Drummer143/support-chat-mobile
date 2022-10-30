@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NavigationContainer } from '@react-navigation/native';
@@ -10,24 +10,53 @@ import QueuePage from './QueuePage/QueuePage';
 import LoginPage from './LoginPage/LoginPage';
 import CreateIssuePage from './CreateIssuePage/CreateIssuePage';
 import { auth } from './firebase';
+import { DataSnapshot } from 'firebase/database';
+import useGetData from './hooks/useGetData';
 
 const Stack = createNativeStackNavigator();
 
 function App() {
     const [user, setUser] = useState<User | null>(null);
     const [authStateChanged, setAuthStateChanged] = useState(false);
+    const [initialRoute, setInitialRoute] = useState('login');
+    const [isDialogsChecked, setIsDialogsChecked] = useState(false);
+    const [loaderText, setLoaderText] = useState('Входим в систему');
+    const [points, setPoints] = useState('.');
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setPoints(prev => prev.length === 3 ? '.' : prev + '.');
+        }, 750);
+
+        return () => clearInterval(interval);
+    })
 
     onAuthStateChanged(auth, user => {
         setUser(user);
         setAuthStateChanged(true);
+
+        if (user) {
+            setInitialRoute('create-issue');
+            setLoaderText('Проверяем наличие активных проблем')
+        }
     });
+
+    useGetData(`clientsData/${user?.uid}/currentDialog`, (snap: DataSnapshot) => {
+        if (authStateChanged && user) {
+            if (snap?.val()) {
+                setInitialRoute('chat');
+            }
+
+            setIsDialogsChecked(true);
+        }
+    }, true, [authStateChanged]);
 
     return (
         <SafeAreaProvider style={styles.wrapper}>
-            {authStateChanged ? (
+            {authStateChanged && isDialogsChecked ? (
                 <NavigationContainer>
                     <Stack.Navigator
-                        initialRouteName={user ? 'chat' : 'login'}
+                        initialRouteName={initialRoute}
                         screenOptions={{
                             headerShown: false,
                             animation: 'fade_from_bottom'
@@ -61,7 +90,7 @@ function App() {
                 </NavigationContainer>
             ) : (
                 <View style={styles.loader}>
-                    <Text style={{ color: '#fff' }}>Loading...</Text>
+                    <Text style={{ color: '#fff' }}>{loaderText}{points}</Text>
                 </View>
             )}
         </SafeAreaProvider>

@@ -29,9 +29,7 @@ function QueuePage({ navigation, route, user }: Props) {
         let dialogs: DataDialog[] = Object.values(snap.val());
 
         if (dialogId !== null) {
-            console.log(dialogId);
             const currentDialog = dialogs.find(dialog => dialog.dialogId === dialogId);
-            console.log(currentDialog);
             if (currentDialog?.status !== 'queue') {
                 navigation.navigate('chat');
             }
