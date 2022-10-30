@@ -22,6 +22,7 @@ function App() {
     const [isDialogsChecked, setIsDialogsChecked] = useState(false);
     const [loaderText, setLoaderText] = useState('Входим в систему');
     const [points, setPoints] = useState('.');
+    const [dialogId, setDialogId] = useState<string | null>(null);
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -45,6 +46,7 @@ function App() {
         if (authStateChanged && user) {
             if (snap?.val()) {
                 setInitialRoute('chat');
+                setDialogId(snap.val());
             }
 
             setIsDialogsChecked(true);
@@ -72,11 +74,11 @@ function App() {
                                 </Stack.Screen>
 
                                 <Stack.Screen name="queue" options={{ title: 'Queue' }}>
-                                    {props => <QueuePage {...props} user={user} />}
+                                    {props => <QueuePage {...props} user={user} dialogId={dialogId} setDialogId={setDialogId} />}
                                 </Stack.Screen>
 
                                 <Stack.Screen name="chat" options={{ title: 'Chat' }}>
-                                    {props => <ChatPage {...props} user={user} />}
+                                    {props => <ChatPage {...props} dialogId={dialogId} user={user} />}
                                 </Stack.Screen>
                             </>
                         ) : (

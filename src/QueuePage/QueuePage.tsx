@@ -13,11 +13,12 @@ type Props = {
     navigation: NativeStackNavigationProp<any, 'queue', 'id'>;
     route: RouteProp<any, 'queue'>;
     user: User | null;
+    dialogId: string | null
+    setDialogId: Function
 };
 
-function QueuePage({ navigation, route, user }: Props) {
+function QueuePage({ navigation, route, user, dialogId, setDialogId }: Props) {
     const [queueLength, setQueueLength] = useState(-1);
-    const [dialogId, setDialogId] = useState<null | string>(null);
 
     useGetData(
         `clientsData/${user?.uid}/currentDialog`,

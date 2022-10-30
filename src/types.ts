@@ -18,3 +18,7 @@ export type DataDialog = {
 
     rating?: number;
 };
+
+export type DataOperatorInfo = {
+    userName: string
+}

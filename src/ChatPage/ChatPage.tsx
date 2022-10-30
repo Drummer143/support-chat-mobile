@@ -9,20 +9,20 @@ import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import useGetData from '../hooks/useGetData';
 import CustomButton from '../CreateIssuePage/CustomButton';
 import { database } from '../firebase';
-import { DataDialog, DataMessage } from '../types';
+import { DataDialog, DataMessage, DataOperatorInfo } from '../types';
 
 type Props = {
     user: User;
     route: RouteProp<ParamListBase, 'chat'>;
     navigation: NativeStackNavigationProp<any, 'chat', 'id'>;
+    dialogId: string | null;
 };
 
-function ChatPage({ user }: Props) {
+function ChatPage({ user, route, navigation, dialogId }: Props) {
     const [input, setInput] = useState('');
     const [dialog, setDialog] = useState<DataDialog | null>(null);
-    const [dialogId, setDialogId] = useState<null | string>(null);
+    const [operatorInfo, setOperatorInfo] = useState<DataOperatorInfo | null>(null);
     const scrollViewRef = useRef<ScrollView>(null);
-    const [isDialogLoaded, setIsDialogLoaded] = useState(false);
 
     const handleSubmit = () => {
         const message: DataMessage = {
@@ -40,30 +40,28 @@ function ChatPage({ user }: Props) {
         setInput('');
     };
 
-    useGetData(
-        `clientsData/${user.uid}/currentDialog`,
-        (snap: DataSnapshot) => setDialogId(snap.val()),
-        true
-    );
+    useGetData(`dialogs/${dialogId}`, (snap: DataSnapshot) => setDialog(snap.val()), false, [dialogId]);
 
-    useGetData(`dialogs/${dialogId}`, (snap: DataSnapshot) => {
-        setDialog(snap.val());
-        setIsDialogLoaded(true);
-    }, false, [dialogId]);
+    useGetData(
+        `supportsData/${dialog?.operatorId}/info`,
+        (snap: DataSnapshot) => setOperatorInfo(snap.val()),
+        true,
+        [dialog]
+    );
 
     return (
         <View style={styles.wrapper}>
             <View style={styles.chatInfo}>
-                <Text style={styles.operatorName}>operator name</Text>
+                {operatorInfo ? <Text style={styles.operatorName}>{operatorInfo.userName}</Text> : <Text style={styles.operatorName}>Loading</Text>}
             </View>
             <ScrollView ref={scrollViewRef} style={styles.messagesList}>
                 {dialog?.messages.map(({ content, timestamp, writtenBy }: DataMessage, i) => (
-                    <View key={`${timestamp}${i}`} 
-                    style={{
-                        ...styles.message,
-                        marginBottom: i === dialog.messages.length - 1 ? 10 : 0,
-                        alignSelf: writtenBy.startsWith('c') ? 'flex-end' : 'flex-start'
-                    }}>
+                    <View key={`${timestamp}${i}`}
+                        style={{
+                            ...styles.message,
+                            marginBottom: i === dialog.messages.length - 1 ? 10 : 0,
+                            alignSelf: writtenBy.startsWith('c') ? 'flex-end' : 'flex-start'
+                        }}>
                         <Text>
                             {content}
                         </Text>
