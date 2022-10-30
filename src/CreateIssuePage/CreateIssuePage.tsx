@@ -8,7 +8,7 @@ import CustomDropdown from './CustomDropdown';
 import { database } from '../firebase';
 import { topicsOfAppeal, subTopics } from './topics';
 import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
-import { auth } from './../firebase';
+import { auth } from '../firebase';
 import { RouteProp } from '@react-navigation/native';
 import { signOut, User } from 'firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -19,7 +19,7 @@ type Props = {
     user: User | null;
 };
 
-const StartScreen = ({ navigation, user }: Props) => {
+const CreateIssuePage = ({ navigation, user }: Props) => {
     const [nameInput, setNameInput] = useState('');
     const [topic, setTopic] = useState(-1);
     const [subTopic, setSubTopic] = useState(-1);
@@ -159,4 +159,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default StartScreen;
+export default CreateIssuePage;

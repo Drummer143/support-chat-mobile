@@ -5,10 +5,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import Chat from './ChatPage/Chat';
-import Queue from './QueuePage/Queue';
+import ChatPage from './ChatPage/ChatPage';
+import QueuePage from './QueuePage/QueuePage';
 import LoginPage from './LoginPage/LoginPage';
-import StartScreen from './StartPage/StartScreen';
+import CreateIssuePage from './CreateIssuePage/CreateIssuePage';
 import { auth } from './firebase';
 
 const Stack = createNativeStackNavigator();
@@ -39,15 +39,15 @@ function App() {
                                     name="create-issue"
                                     options={{ title: 'Create issue' }}
                                 >
-                                    {props => <StartScreen {...props} user={user} />}
+                                    {props => <CreateIssuePage {...props} user={user} />}
                                 </Stack.Screen>
 
                                 <Stack.Screen name="queue" options={{ title: 'Queue' }}>
-                                    {props => <Queue {...props} user={user} />}
+                                    {props => <QueuePage {...props} user={user} />}
                                 </Stack.Screen>
 
                                 <Stack.Screen name="chat" options={{ title: 'Chat' }}>
-                                    {props => <Chat {...props} user={user} />}
+                                    {props => <ChatPage {...props} user={user} />}
                                 </Stack.Screen>
                             </>
                         ) : (

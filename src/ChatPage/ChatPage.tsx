@@ -8,7 +8,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import useGetData from '../hooks/useGetData';
-import CustomButton from '../StartPage/CustomButton';
+import CustomButton from '../CreateIssuePage/CustomButton';
 
 type Props = {
     user: User;
@@ -16,7 +16,7 @@ type Props = {
     navigation: NativeStackNavigationProp<any, 'chat', 'id'>;
 };
 
-function Chat({ user }: Props) {
+function ChatPage({ user }: Props) {
     const [input, setInput] = useState('');
     const [dialog, setDialog] = useState<DataDialog | null>(null);
     const [dialogId, setDialogId] = useState<null | string>(null);
@@ -144,4 +144,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Chat;
+export default ChatPage;

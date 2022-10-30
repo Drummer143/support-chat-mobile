@@ -15,7 +15,7 @@ type Props = {
     user: User | null;
 };
 
-function Queue({ navigation, route, user }: Props) {
+function QueuePage({ navigation, route, user }: Props) {
     const [queueLength, setQueueLength] = useState(-1);
     const [dialogId, setDialogId] = useState<null | string>(null);
 
@@ -75,4 +75,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Queue;
+export default QueuePage;
