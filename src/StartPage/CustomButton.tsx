@@ -2,16 +2,22 @@ import { useState } from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 type Props = {
-    text: string
+    text: string;
 
-    style?: StyleMedia | null
-    textColor?: string
+    style?: StyleMedia | null;
+    textColor?: string;
 
-    onPressIn?: Function | null
-    onPressOut?: Function | null
-}
+    onPressIn?: Function | null;
+    onPressOut?: Function | null;
+};
 
-const CustomButton = ({ text, style = null, textColor = 'white', onPressIn = null, onPressOut = null }: Props) => {
+const CustomButton = ({
+    text,
+    style = null,
+    textColor = 'white',
+    onPressIn = null,
+    onPressOut = null
+}: Props) => {
     const [active, setActive] = useState(false);
 
     const handlePressIn = () => {
@@ -20,7 +26,7 @@ const CustomButton = ({ text, style = null, textColor = 'white', onPressIn = nul
         if (onPressIn) {
             onPressIn();
         }
-    }
+    };
 
     const handlePressOut = () => {
         setActive(false);
@@ -28,7 +34,7 @@ const CustomButton = ({ text, style = null, textColor = 'white', onPressIn = nul
         if (onPressOut) {
             onPressOut();
         }
-    }
+    };
 
     return (
         <TouchableOpacity
@@ -38,8 +44,8 @@ const CustomButton = ({ text, style = null, textColor = 'white', onPressIn = nul
         >
             <Text style={{ color: textColor }}>{text}</Text>
         </TouchableOpacity>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -54,6 +60,6 @@ const styles = StyleSheet.create({
     active: {
         backgroundColor: '#000'
     }
-})
+});
 
 export default CustomButton;

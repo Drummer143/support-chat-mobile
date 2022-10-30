@@ -14,10 +14,10 @@ import { signOut, User } from 'firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 type Props = {
-    navigation: NativeStackNavigationProp<any, "create-issue", "id">
-    route: RouteProp<any, "create-issue">
-    user: User | null
-}
+    navigation: NativeStackNavigationProp<any, 'create-issue', 'id'>;
+    route: RouteProp<any, 'create-issue'>;
+    user: User | null;
+};
 
 const StartScreen = ({ navigation, user }: Props) => {
     const [nameInput, setNameInput] = useState('');
@@ -26,9 +26,8 @@ const StartScreen = ({ navigation, user }: Props) => {
 
     const handleSubmit = () => {
         if (nameInput && topic !== -1 && subTopic !== -1) {
-
             const id = uuid.default.v4();
-            const timestamp = (new Date()).getTime();
+            const timestamp = new Date().getTime();
 
             const newDialog = {
                 dialogId: id,
@@ -53,53 +52,57 @@ const StartScreen = ({ navigation, user }: Props) => {
 
             update(dbRef, { [`dialogs/${id}`]: newDialog });
 
-            update(dbRef, { ['clientsData/uuid/currentDialog']: id })
+            update(dbRef, { ['clientsData/uuid/currentDialog']: id });
 
             navigation.navigate('queue');
         }
-    }
+    };
 
     const handleLogOut = () => {
         signOut(auth);
         GoogleSignin.revokeAccess();
         GoogleSignin.signOut();
-    }
+    };
 
-    useEffect(() => setSubTopic(-1), [topic])
+    useEffect(() => setSubTopic(-1), [topic]);
 
     return (
         <View style={styles.wrapper}>
             <View style={styles.userInfo}>
                 <Text style={styles.userName}>{user?.displayName || 'your user name'}</Text>
-                <CustomButton style={styles.logoutButton} text='Выйти' onPressIn={handleLogOut} />
+                <CustomButton style={styles.logoutButton} text="Выйти" onPressIn={handleLogOut} />
             </View>
 
             <Text style={styles.heading}>Здравствуйте!</Text>
-            <Text style={styles.info}>Чтобы встать в очередь и получить помощь заполните анкету ниже.</Text>
+            <Text style={styles.info}>
+                Чтобы встать в очередь и получить помощь заполните анкету ниже.
+            </Text>
 
             <TextInput
                 style={styles.input}
                 onChangeText={value => setNameInput(value)}
-                placeholder='Ф.И.О.'
+                placeholder="Ф.И.О."
             />
 
             <CustomDropdown
-                placeholder='Выберите тему из списка'
+                placeholder="Выберите тему из списка"
                 data={topicsOfAppeal}
                 onChange={setTopic}
             />
 
             <CustomDropdown
-                placeholder={topic === -1 ? 'Для начала выберите тему' : 'Выберите подтему из списка'}
+                placeholder={
+                    topic === -1 ? 'Для начала выберите тему' : 'Выберите подтему из списка'
+                }
                 data={subTopics[topic - 1]}
                 onChange={setSubTopic}
                 disabled={topic === -1}
             />
 
-            <CustomButton text='Отправить' style={styles.button} onPressOut={handleSubmit} />
+            <CustomButton text="Отправить" style={styles.button} onPressOut={handleSubmit} />
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -154,6 +157,6 @@ const styles = StyleSheet.create({
         height: 22,
         marginTop: 4
     }
-})
+});
 
 export default StartScreen;

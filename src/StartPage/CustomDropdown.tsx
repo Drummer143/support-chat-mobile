@@ -2,17 +2,17 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { StyleSheet } from 'react-native';
 
 type TopicItem = {
-    label: string
-    value: number
-}
+    label: string;
+    value: number;
+};
 type Props = {
-    placeholder: string
-    data: TopicItem[]
+    placeholder: string;
+    data: TopicItem[];
 
-    disabled?: boolean
+    disabled?: boolean;
 
-    onChange: Function
-}
+    onChange: Function;
+};
 
 const CustomDropdown = ({ placeholder, data, onChange, disabled = false }: Props) => {
     return (
@@ -23,17 +23,17 @@ const CustomDropdown = ({ placeholder, data, onChange, disabled = false }: Props
             placeholderStyle={styles.placeholder}
             containerStyle={styles.container}
             data={data}
-            labelField='label'
-            valueField='value'
+            labelField="label"
+            valueField="value"
             onChange={e => onChange(e.value)}
             maxHeight={250}
             placeholder={placeholder}
-            searchPlaceholder='Поиск темы...'
+            searchPlaceholder="Поиск темы..."
             search
             disable={disabled}
         />
     );
-}
+};
 
 const styles = StyleSheet.create({
     dropdown: {
@@ -64,6 +64,6 @@ const styles = StyleSheet.create({
         borderColor: '#777',
         borderRadius: 5
     }
-})
+});
 
 export default CustomDropdown;

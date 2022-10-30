@@ -41,5 +41,5 @@ export const subTopics = [
         { label: 'Подтема 53', value: 53 },
         { label: 'Подтема 54', value: 54 },
         { label: 'Подтема 55', value: 55 }
-    ],
+    ]
 ];
