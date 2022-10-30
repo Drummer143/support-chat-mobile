@@ -53,7 +53,7 @@ const StartScreen = ({ navigation, user }: Props) => {
 
             update(dbRef, { [`dialogs/${id}`]: newDialog });
 
-            update(dbRef, { [`clientsData/uuid/currentDialog`]: id })
+            update(dbRef, { ['clientsData/uuid/currentDialog']: id })
 
             navigation.navigate('queue');
         }
@@ -64,8 +64,6 @@ const StartScreen = ({ navigation, user }: Props) => {
         GoogleSignin.revokeAccess();
         GoogleSignin.signOut();
     }
-
-    console.log(user);
 
     useEffect(() => setSubTopic(-1), [topic])
 

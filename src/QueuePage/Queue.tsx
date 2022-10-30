@@ -1,13 +1,37 @@
-import { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
-import { DataSnapshot } from 'firebase/database';
-import { useGetQueueLength } from './useGetQueueLenth';
+import { User } from 'firebase/auth';
+import { useState } from 'react';
+import { RouteProp } from '@react-navigation/native';
+import { View, Text, StyleSheet } from 'react-native';
+import { DataSnapshot, onValue, ref } from 'firebase/database';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-function Queue() {
+import useGetData from './useGetData';
+import { database } from '../firebase';
+import { DataDialog } from '../types';
+
+type Props = {
+    navigation: NativeStackNavigationProp<any, "queue", "id">
+    route: RouteProp<any, "queue">
+    user: User | null
+}
+
+function Queue({ navigation, route, user }: Props) {
     const [queueLength, setQueueLength] = useState(-1);
+    const [dialogId, setDialogId] = useState<null | string>(null);
 
-    useGetQueueLength((snap: DataSnapshot) => {
-        let dialogs = Object.values(snap.val());
+    useGetData('clientsData/uuid/currentDialog', (snap: DataSnapshot) => setDialogId(snap.val()), true);
+
+    useGetData('dialogs', (snap: DataSnapshot) => {
+        let dialogs: DataDialog[] = Object.values(snap.val());
+
+        if (dialogId !== null) {
+            console.log(dialogId);
+            const currentDialog = dialogs.find((dialog) => dialog.dialogId === dialogId);
+            console.log(currentDialog);
+            if (currentDialog?.status !== 'queue') {
+                navigation.navigate('chat');
+            } 
+        }
 
         dialogs = dialogs.filter((dialog: any) => dialog.status === 'queue');
 
@@ -15,10 +39,10 @@ function Queue() {
     });
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000' }}>
+        <View style={styles.wrapper}>
             {queueLength === -1 ? (
                 <>
-                    <Text style={{ width: '70%', textAlign: 'center' }}>Считаем вашу позицию в очереди, подождите пожалуйста.</Text>
+                    <Text style={styles.loaderText}>Считаем вашу позицию в очереди, подождите пожалуйста.</Text>
                 </>
             ) : (
                 <>
@@ -30,5 +54,18 @@ function Queue() {
         </View >
     )
 }
+
+const styles = StyleSheet.create({
+    wrapper: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#000'
+    },
+    loaderText: {
+        width: '70%',
+        textAlign: 'center'
+    }
+})
 
 export default Queue;

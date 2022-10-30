@@ -4,14 +4,14 @@ import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 type Props = {
     text: string
 
-    style: StyleMedia | null
+    style?: StyleMedia | null
     textColor?: string
 
     onPressIn?: Function | null
     onPressOut?: Function | null
 }
 
-const CustomButton = ({ text, style, textColor = 'white', onPressIn = null, onPressOut = null }: Props) => {
+const CustomButton = ({ text, style = null, textColor = 'white', onPressIn = null, onPressOut = null }: Props) => {
     const [active, setActive] = useState(false);
 
     const handlePressIn = () => {

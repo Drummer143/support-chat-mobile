@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import Chat from './ChatPage/Chat';
 import Queue from './QueuePage/Queue';
 import LoginPage from './LoginPage/LoginPage';
 import StartScreen from "./StartPage/StartScreen";
@@ -26,9 +27,9 @@ function App() {
       {authStateChanged ? (
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName={user ? 'create-issue' : 'login'}
+            initialRouteName={user ? 'chat' : 'login'}
             screenOptions={{
-              // headerShown: false,
+              headerShown: false,
               animation: 'fade_from_bottom'
             }}
           >
@@ -38,7 +39,14 @@ function App() {
                   <Stack.Screen name="create-issue" options={{ title: 'Create issue' }}>
                     {props => <StartScreen {...props} user={user} />}
                   </Stack.Screen>
-                  <Stack.Screen name="queue" component={Queue} options={{ title: 'Queue' }} />
+
+                  <Stack.Screen name="queue" options={{ title: 'Queue' }}>
+                    {props => <Queue {...props} user={user} />}
+                  </Stack.Screen>
+
+                  <Stack.Screen name='chat' options={{ title: 'Chat' }}>
+                    {props => <Chat />}
+                  </Stack.Screen>
                 </>
               )
                 : <Stack.Screen name='login' component={LoginPage} options={{ title: 'Login' }} />
