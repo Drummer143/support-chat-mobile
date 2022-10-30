@@ -1,7 +1,6 @@
+import moment from 'moment';
 import { User } from 'firebase/auth';
-import { database } from '../firebase';
-import { useRef, useState } from 'react';
-import { DataDialog, DataMessage } from '../types';
+import React, { useRef, useState } from 'react';
 import { RouteProp, ParamListBase } from '@react-navigation/native';
 import { DataSnapshot, ref, update } from 'firebase/database';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -9,6 +8,8 @@ import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import useGetData from '../hooks/useGetData';
 import CustomButton from '../CreateIssuePage/CustomButton';
+import { database } from '../firebase';
+import { DataDialog, DataMessage } from '../types';
 
 type Props = {
     user: User;
@@ -21,6 +22,7 @@ function ChatPage({ user }: Props) {
     const [dialog, setDialog] = useState<DataDialog | null>(null);
     const [dialogId, setDialogId] = useState<null | string>(null);
     const scrollViewRef = useRef<ScrollView>(null);
+    const [isDialogLoaded, setIsDialogLoaded] = useState(false);
 
     const handleSubmit = () => {
         const message: DataMessage = {
@@ -44,7 +46,10 @@ function ChatPage({ user }: Props) {
         true
     );
 
-    useGetData(`dialogs/${dialogId}`, (snap: DataSnapshot) => setDialog(snap.val()));
+    useGetData(`dialogs/${dialogId}`, (snap: DataSnapshot) => {
+        setDialog(snap.val());
+        setIsDialogLoaded(true);
+    }, false, [dialogId]);
 
     return (
         <View style={styles.wrapper}>
@@ -53,17 +58,18 @@ function ChatPage({ user }: Props) {
             </View>
             <ScrollView ref={scrollViewRef} style={styles.messagesList}>
                 {dialog?.messages.map(({ content, timestamp, writtenBy }: DataMessage, i) => (
-                    <Text
-                        style={{
-                            ...styles.message,
-                            marginBottom: i === dialog.messages.length - 1 ? 10 : 0,
-                            alignSelf: writtenBy.startsWith('c') ? 'flex-end' : 'flex-start'
-                        }}
-                        key={`${timestamp}${i}`}
-                    >
-                        {content}
-                    </Text>
-                ))}
+                    <View key={`${timestamp}${i}`} 
+                    style={{
+                        ...styles.message,
+                        marginBottom: i === dialog.messages.length - 1 ? 10 : 0,
+                        alignSelf: writtenBy.startsWith('c') ? 'flex-end' : 'flex-start'
+                    }}>
+                        <Text>
+                            {content}
+                        </Text>
+                        <Text style={styles.sendedIn}>{moment(timestamp).fromNow()}</Text>
+                    </View>
+                )) || <Text style={styles.loaderText}>Загружаем</Text>}
             </ScrollView>
             <View style={styles.inputWrapper}>
                 <TextInput
@@ -71,6 +77,7 @@ function ChatPage({ user }: Props) {
                     value={input}
                     onChangeText={value => setInput(value)}
                     style={styles.inputField}
+                    editable={!!dialog}
                 ></TextInput>
                 <CustomButton
                     text="Send"
@@ -108,16 +115,19 @@ const styles = StyleSheet.create({
     },
     message: {
         backgroundColor: '#333',
-        padding: 10,
+        paddingHorizontal: 10,
+        paddingTop: 10,
+        paddingBottom: 5,
         borderRadius: 10,
         marginTop: 10,
         maxWidth: '60%'
     },
-    clientMessage: {
-        alignSelf: 'flex-end'
-    },
-    operatorMessage: {
-        alignSelf: 'flex-start'
+    sendedIn: {
+        fontSize: 10,
+        opacity: 0.5,
+        marginTop: 5,
+        borderTopColor: "#000",
+        borderTopWidth: 1
     },
     inputWrapper: {
         width: '100%',
@@ -141,6 +151,12 @@ const styles = StyleSheet.create({
         height: '70%',
         marginLeft: '2%',
         backgroundColor: 'green'
+    },
+    loaderText: {
+        width: '100%',
+        height: '100%',
+        textAlignVertical: 'center',
+        textAlign: 'center'
     }
 });
 
