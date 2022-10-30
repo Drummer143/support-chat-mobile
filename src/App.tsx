@@ -45,7 +45,7 @@ function App() {
                   </Stack.Screen>
 
                   <Stack.Screen name='chat' options={{ title: 'Chat' }}>
-                    {props => <Chat />}
+                    {props => <Chat user={user} />}
                   </Stack.Screen>
                 </>
               )

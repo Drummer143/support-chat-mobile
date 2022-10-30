@@ -1,12 +1,18 @@
-import { DataSnapshot, ref, update } from "firebase/database";
-import { useRef, useState } from "react";
-import { Button, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { User } from 'firebase/auth';
 import { database } from "../firebase";
+import { useRef, useState } from "react";
+import { DataDialog, DataMessage } from "../types";
+import { DataSnapshot, ref, update } from "firebase/database";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+
 import useGetData from "../QueuePage/useGetData";
 import CustomButton from "../StartPage/CustomButton";
-import { DataDialog, DataMessage } from "../types";
 
-function Chat() {
+type Props = {
+    user: User
+}
+
+function Chat({ user }: Props) {
     const [dialogId, setDialogId] = useState<null | string>(null);
     const [dialog, setDialog] = useState<DataDialog | null>(null);
     const [input, setInput] = useState('');
@@ -16,7 +22,7 @@ function Chat() {
         const message: DataMessage = {
             content: input,
             timestamp: (new Date).getTime(),
-            writtenBy: 'client'
+            writtenBy: `c_${user.uid}`
         }
 
         update(ref(database), {[`dialogs/${dialogId}/messages/${dialog?.messages.length || 0}`]: message});
@@ -26,7 +32,7 @@ function Chat() {
         setInput('');
     }
 
-    useGetData('clientsData/uuid/currentDialog', (snap: DataSnapshot) => setDialogId(snap.val()), true);
+    useGetData(`clientsData/${user.uid}/currentDialog`, (snap: DataSnapshot) => setDialogId(snap.val()), true);
 
     useGetData(`dialogs/${dialogId}`, (snap: DataSnapshot) => setDialog(snap.val()));
 
@@ -40,7 +46,7 @@ function Chat() {
                     <Text style={{
                         ...styles.message,
                         marginBottom: i === dialog.messages.length - 1 ? 10 : 0,
-                        alignSelf: writtenBy === 'client' ? 'flex-end' : 'flex-start'
+                        alignSelf: writtenBy.startsWith('c') ? 'flex-end' : 'flex-start'
                     }} key={`${timestamp}${i}`}>{content}</Text>
                 )}
             </ScrollView>

@@ -19,7 +19,7 @@ function Queue({ navigation, route, user }: Props) {
     const [queueLength, setQueueLength] = useState(-1);
     const [dialogId, setDialogId] = useState<null | string>(null);
 
-    useGetData('clientsData/uuid/currentDialog', (snap: DataSnapshot) => setDialogId(snap.val()), true);
+    useGetData(`clientsData/${user?.uid}/currentDialog`, (snap: DataSnapshot) => setDialogId(snap.val()), true);
 
     useGetData('dialogs', (snap: DataSnapshot) => {
         let dialogs: DataDialog[] = Object.values(snap.val());
